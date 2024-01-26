@@ -20,7 +20,7 @@ spec:
       labels:
         {{- include "roboshop.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+    {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -29,7 +29,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
         - name: aws-params
-          image: 739561048503.dkr.ecr.us-east-1.amazonaws.com/aws-parameter-init-container:latest
+          image: 403215663985.dkr.ecr.us-east-1.amazonaws.com/aws-parameter-init-container:latest
           imagePullPolicy: Always
           env:
             - name: PARAMETERS
@@ -37,17 +37,6 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: param-volume
-#      {{- if .Values.schemaInitContainer.enabled }}
-#      - name: schema-laod
-#        image: 739561048503.dkr.ecr.us-east-1.amazonaws.com/schema-load-init-container:latest
-#        imagePullPolicy: Always
-#        env:
-#          - name: PARAMETERS
-#            value: {{ .Values.PARAMETERS }}
-#        volumeMounts:
-#          - mountPath: /data
-#            name: param-volume
-#      {{- end }}
       containers:
         - name: {{ .Values.component }}
           securityContext:
@@ -68,10 +57,18 @@ spec:
               port: {{ .Values.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+#          {{- with .Values.volumeMounts }}
           volumeMounts:
             - mountPath: /data
               name: param-volume
-      {{- with .Values.nodeSelector }}
+#          volumeMounts:
+#            {{- toYaml . | nindent 12 }}
+#          {{- end }}
+#      {{- with .Values.volumes }}
+#      volumes:
+#        {{- toYaml . | nindent 8 }}
+#      {{- end }}
+#      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
